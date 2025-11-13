@@ -1,19 +1,32 @@
 <template>
-  <v-container class="fill-height" fluid>
-    <v-row align="center" justify="center">
-      <v-col cols="12" md="6">
-        <v-card>
-          <v-card-title class="text-h5">Login</v-card-title>
-          <v-card-text>
-            <v-text-field v-model="email" label="Email" />
-            <v-text-field v-model="password" label="Password" type="password" />
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" @click="onLogin">Ingresar</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+  <v-container class="py-4" max-width="400">
+    <v-card>
+      <v-card-title>Acceso</v-card-title>
+
+      <v-card-text>
+        <v-form @submit.prevent="onLogin" ref="formRef">
+          <v-text-field
+            data-testid="email-input"
+            v-model="email"
+            label="Email"
+            type="email"
+            required
+          />
+          <v-text-field
+            data-testid="password-input"
+            v-model="password"
+            label="Password"
+            type="password"
+            required
+          />
+
+          <v-btn type="submit" color="primary" class="mt-2" block>
+            Ingresar
+          </v-btn>
+
+        </v-form>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
 
@@ -26,6 +39,7 @@ const email = ref('')
 const password = ref('')
 const router = useRouter()
 const auth = useAuthStore()
+const formRef = ref(null)
 
 async function onLogin() {
   try {
