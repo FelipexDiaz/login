@@ -25,7 +25,7 @@
     <v-spacer></v-spacer>
 
     <template v-if="auth.user">
-      <span class="me-3">{{ auth.user.email }}</span>
+      <span class="me-3">{{ auth.user?.id }} | {{ auth.user?.name }} | {{ auth.user?.email }}</span>
       <v-btn icon @click="logout">
         <v-icon>mdi-logout</v-icon>
       </v-btn>

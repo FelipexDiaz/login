@@ -5,9 +5,9 @@ import DashboardView from '../views/DashboardView.vue'
 import { useAuthStore } from '../store/auth'
 
 const routes = [
-  { path: '/', component: HomeView },
-  { path: '/login', component: LoginView },
-  { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } }
+  { path: '/', name: 'Home', component: HomeView },
+  { path: '/login', name: 'Login', component: LoginView, meta: { guest: true } },
+  { path: '/dashboard', name: 'Dashboard', component: DashboardView, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({
@@ -15,14 +15,18 @@ const router = createRouter({
   routes
 })
 
-// Guard: protege rutas que requieren login
+// 🔹 Guard global de rutas
 router.beforeEach((to, from, next) => {
+  const requiresAuth = to.meta.requiresAuth
+  const guest = to.meta.guest
   const auth = useAuthStore()
-  if (to.meta.requiresAuth && !auth.accessToken) {
-    next('/login')
-  } else {
-    next()
-  }
+
+  if (requiresAuth && !auth.accessToken) return next('/login')
+  
+
+
+  next()
 })
 
 export default router
+
