@@ -1,3 +1,4 @@
+
 <template>
   <!-- Drawer y App Bar separados del v-main -->
   <v-navigation-drawer
@@ -51,9 +52,14 @@ const logout = async () => {
   router.push('/login')
 }
 
+function selectPage(page) {
+  currentPage.value = page
+}
+
 const navItems = computed(() => [
   { title: 'Home', to: '/', visible: true },
-  { title: 'Admin', to: '/admin', visible: !!auth.user }
+  { title: 'Token', to: '/Token', visible: !!auth.user },
+  { title: 'Test', to: '/Test1', visible: !!auth.user }
 ].filter(item => item.visible))
 </script>
 
