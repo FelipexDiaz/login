@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import { createPinia } from 'pinia'
-import router from './router'
+import router, { cargarModulosDinamicos } from './router'
 
 // Vuetify
 import 'vuetify/styles'
@@ -18,13 +18,23 @@ const vuetify = createVuetify({
     VListItemSubtitle: components.VListItemSubtitle,
   },
   directives,
-    icons: {
+  icons: {
     defaultSet: 'mdi',
   },
 })
 
-const app = createApp(App)
-app.use(createPinia())
-app.use(router)
-app.use(vuetify)
-app.mount('#app')
+async function bootstrap() {
+  const app = createApp(App)
+
+  app.use(createPinia())
+
+  // 🔥 Cargar módulos dinámicos ANTES de que Vue monte
+  await cargarModulosDinamicos()
+
+  app.use(router)
+  app.use(vuetify)
+
+  app.mount('#app')
+}
+
+bootstrap()
