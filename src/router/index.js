@@ -30,7 +30,7 @@ export async function cargarModulosDinamicos() {
   if (!auth.accessToken) return
 
   try {
-    const response = await axios.get('http://localhost/login-backend/modulos', {
+    const response = await axios.get('http://localhost/dev/modulos', {
       headers: {
         Authorization: `Bearer ${auth.accessToken}`
       }
