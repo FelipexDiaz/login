@@ -30,6 +30,16 @@ export async function cargarModulosDinamicos() {
   const auth = useAuthStore()
   if (!auth.accessToken) return
 
+  // Asegurarse de que los datos del usuario estén disponibles
+  if (!auth.user) {
+    try {
+      await auth.fetchUser?.() // si tienes un método para cargar user desde API
+    } catch (e) {
+      console.error("❌ Error cargando datos del usuario:", e)
+      return
+    }
+  }
+
   try {
     const response = await api.get('/modulos') // <-- reemplazamos axios por api
 
@@ -40,7 +50,8 @@ export async function cargarModulosDinamicos() {
         container: mod.container,
         activeRule: mod.ruta,
         props: {
-          token: localStorage.getItem('accessToken')
+          token: auth.accessToken, 
+          user: auth.user          
         }
       }))
 
