@@ -44,7 +44,7 @@ const formRef = ref(null)
 async function onLogin() {
   try {
     await auth.login(email.value, password.value)
-    router.push('/dashboard')
+    router.push('/')
   } catch (e) {
     alert('Credenciales inválidas')
   }

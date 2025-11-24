@@ -5,6 +5,7 @@ import DashboardView from '../views/Permisos.vue'
 import TokenView from '../views/Token.vue'
 import { useAuthStore } from '../store/auth'
 import axios from 'axios'
+import { registerMicroApps } from 'qiankun'
 
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
@@ -21,7 +22,8 @@ const router = createRouter({
 /* ===========================================================
    🔥 FUNCION: Cargar módulos dinámicos según permisos
    =========================================================== */
-let modulosCargados = false
+
+   let modulosCargados = false
 
 export async function cargarModulosDinamicos() {
   if (modulosCargados) return
@@ -36,24 +38,28 @@ export async function cargarModulosDinamicos() {
       }
     })
 
+console.log(response)
+
     if (response.data.ok) {
-      response.data.modulos.forEach(mod => {
-        // Evitar agregar rutas duplicadas
-        if (!router.hasRoute(mod.nombre)) {
-          router.addRoute({
-            path: mod.ruta,
-            name: mod.nombre,
-            component: () =>
-              import(`../modules/${mod.componente}.vue`)
-          })
-          console.log(`🔥 Módulo añadido: ${mod.nombre} → ${mod.ruta}`)
-        }
-      })
+      const apps = response.data.modulos.map(mod => ({
+        name: mod.nombre,
+        entry: mod.entry,           // URL del micro-app
+        container: mod.container,   // Ej: "#micro-container"
+        activeRule: mod.ruta        // Ruta donde se activa el micro-app
+      }))
+
+      // Registrar micro-apps dinámicamente
+      registerMicroApps(apps)
+
+      console.log("🔥 Micro-frontends registrados:", apps)
+
+      // Iniciar qiankun (solo una vez)
+      start()
 
       modulosCargados = true
     }
   } catch (error) {
-    console.error("❌ Error cargando módulos dinámicos:", error)
+    console.error("❌ Error cargando micro-frontends dinámicos:", error)
   }
 }
 

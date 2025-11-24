@@ -8,8 +8,7 @@
       <v-list-item
         v-for="item in navItems"
         :key="item.title"
-        :to="item.to"
-        @click="drawer = false"
+        @click="navigate(item.to)"
       >
         <v-list-item-title>{{ item.title }}</v-list-item-title>
       </v-list-item>
@@ -32,7 +31,7 @@
     </template>
 
     <template v-else>
-      <v-btn text :to="{ path: '/login' }">Login</v-btn>
+      <v-btn text @click="navigate('/login')">Login</v-btn>
     </template>
   </v-app-bar>
 </template>
@@ -46,18 +45,31 @@ const drawer = ref(false)
 const auth = useAuthStore()
 const router = useRouter()
 
+/* =======================================================
+   🚀 Navegar activando microfrontends con Qiankun
+   ======================================================= */
+const navigate = (path) => {
+  drawer.value = false
+  
+  // Navegar usando vue-router
+  router.push(path)
+}
+
+/* =======================================================
+   🔥 Logout
+   ======================================================= */
 const logout = async () => {
   await auth.logout()
   router.push('/login')
 }
 
 /* =======================================================
-   🔥 Cargar módulos dinámicos ya guardados en el auth store
+   🔥 Cargar módulos dinámicos del auth store
    ======================================================= */
 const modulos = computed(() => auth.modulos || [])
 
 /* =======================================================
-   🔥 Mezclar items fijos con módulos dinámicos
+   🔥 Mezclar items fijos con módulos de Qiankun
    ======================================================= */
 const navItems = computed(() => {
   const baseItems = [
@@ -65,9 +77,10 @@ const navItems = computed(() => {
     { title: 'Token', to: '/Token', visible: !!auth.user },
   ]
 
+  // Cada módulo dinámico viene de Qiankun
   const dynamicItems = modulos.value.map(m => ({
     title: m.nombre,
-    to: m.ruta,
+    to: m.ruta,   // ruta = activeRule → activa microfrontend
     visible: true
   }))
 

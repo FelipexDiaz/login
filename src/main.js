@@ -1,7 +1,12 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import { createPinia } from 'pinia'
-import router, { cargarModulosDinamicos } from './router'
+import router from './router'
+
+// Qiankun
+import { registerMicroApps, start } from 'qiankun'
+import { useAuthStore } from './store/auth'
+import { cargarModulosDinamicos } from './router'
 
 // Vuetify
 import 'vuetify/styles'
@@ -28,12 +33,29 @@ async function bootstrap() {
 
   app.use(createPinia())
 
-  // 🔥 Cargar módulos dinámicos ANTES de que Vue monte
-  await cargarModulosDinamicos()
-
+  // ======================================================
+  // 🔥 1) Inicializar store y router (para obtener token)
+  // ======================================================
   app.use(router)
   app.use(vuetify)
 
+  // ======================================================
+  // 🔥 2) Intentar cargar microfrontends dinámicos
+  // ======================================================
+  const auth = useAuthStore()
+  
+  if (auth.accessToken) {
+    await cargarModulosDinamicos()
+  }
+
+  // ======================================================
+  // 🔥 3) Iniciar Qiankun (solo una vez)
+  // ======================================================
+  start()
+
+  // ======================================================
+  // 🔥 4) Finalmente montar Vue
+  // ======================================================
   app.mount('#app')
 }
 
