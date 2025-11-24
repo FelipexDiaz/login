@@ -50,17 +50,19 @@ const router = useRouter()
    ======================================================= */
 const navigate = (path) => {
   drawer.value = false
-  
-  // Navegar usando vue-router
   router.push(path)
 }
 
 /* =======================================================
-   🔥 Logout
+   🔥 Logout actualizado
    ======================================================= */
 const logout = async () => {
-  await auth.logout()
-  router.push('/login')
+  // Limpiar datos del usuario y módulos
+  auth.user = null
+  auth.modulos = []
+
+  drawer.value = false
+  await router.push('/login')
 }
 
 /* =======================================================
@@ -68,19 +70,15 @@ const logout = async () => {
    ======================================================= */
 const modulos = computed(() => auth.modulos || [])
 
-/* =======================================================
-   🔥 Mezclar items fijos con módulos de Qiankun
-   ======================================================= */
 const navItems = computed(() => {
   const baseItems = [
     { title: 'Home', to: '/', visible: true },
     { title: 'Token', to: '/Token', visible: !!auth.user },
   ]
 
-  // Cada módulo dinámico viene de Qiankun
   const dynamicItems = modulos.value.map(m => ({
     title: m.nombre,
-    to: m.ruta,   // ruta = activeRule → activa microfrontend
+    to: m.ruta,
     visible: true
   }))
 

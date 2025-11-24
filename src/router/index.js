@@ -38,14 +38,15 @@ export async function cargarModulosDinamicos() {
       }
     })
 
-console.log(response)
-
     if (response.data.ok) {
       const apps = response.data.modulos.map(mod => ({
         name: mod.nombre,
         entry: mod.entry,           // URL del micro-app
         container: mod.container,   // Ej: "#micro-container"
-        activeRule: mod.ruta        // Ruta donde se activa el micro-app
+        activeRule: mod.ruta,        // Ruta donde se activa el micro-app
+        props: {
+          token: localStorage.getItem('accessToken')
+        }
       }))
 
       // Registrar micro-apps dinámicamente
@@ -54,7 +55,7 @@ console.log(response)
       console.log("🔥 Micro-frontends registrados:", apps)
 
       // Iniciar qiankun (solo una vez)
-      start()
+      //start()
 
       modulosCargados = true
     }
